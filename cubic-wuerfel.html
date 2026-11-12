@@ -80,6 +80,13 @@
   .blue   { background: linear-gradient(145deg, #4da3ff, #0b57c2); }
   .green  { background: linear-gradient(145deg, #4ce07f, #0f9d4a); }
 
+  .front  { transform: translateZ(150px); }
+  .back   { transform: rotateY(180deg) translateZ(150px); }
+  .right  { transform: rotateY(90deg)  translateZ(150px); }
+  .left   { transform: rotateY(-90deg) translateZ(150px); }
+  .top    { transform: rotateX(90deg)  translateZ(150px); }
+  .bottom { transform: rotateX(-90deg) translateZ(150px); }
+
   /* Schubladen: ein zufällig wirkender Sticker gleitet heraus und zurück.
      Alle 54 Sticker teilen sich eine Keyframe-Definition, erhalten aber
      eigene Zykluslängen und Phasenverschiebungen - dadurch öffnen sich
