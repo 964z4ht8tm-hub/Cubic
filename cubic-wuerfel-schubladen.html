@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cubic-Würfel – frei schwebend</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 30%, #1c2340 0%, #0b0e1a 55%, #05060c 100%);
+    font-family: sans-serif;
+  }
+
+  .scene {
+    perspective: 1100px;
+  }
+
+  /* Auf- und abschweben */
+  .float {
+    transform-style: preserve-3d;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(-18px); }
+    50%      { transform: translateY(18px); }
+  }
+
+  /* Taumelnde Drehung um alle drei Achsen (X: 1, Y: 2, Z: 1 Umdrehung pro Zyklus) */
+  .cube {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    transform-style: preserve-3d;
+    animation: tumble 60s linear infinite;
+  }
+
+  @keyframes tumble {
+    from { transform: rotateX(-20deg) rotateY(0deg)   rotateZ(0deg); }
+    to   { transform: rotateX(340deg) rotateY(720deg) rotateZ(360deg); }
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 12px;
+    background: #0a0a0a;
+    border-radius: 14px;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+
+  .sticker {
+    position: relative;
+    border-radius: 12px;
+    transform: translateZ(0);
+    transform-style: preserve-3d;
+    box-shadow:
+      inset 0 2px 6px rgba(255, 255, 255, 0.35),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.35);
+    transition:
+      transform 0.9s cubic-bezier(0.45, 0, 0.25, 1),
+      box-shadow 0.9s ease;
+  }
+
+  .sticker.out {
+    transform: translateZ(48px);
+    box-shadow:
+      inset 0 2px 6px rgba(255, 255, 255, 0.35),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.35),
+      0 0 22px rgba(120, 170, 255, 0.45);
+  }
+
+  /* Seitenwaende der Schublade - in der Farbe des jeweiligen Stickers */
+  .wall {
+    position: absolute;
+    backface-visibility: hidden;
+  }
+
+  .wall-t { bottom: 100%; left: 0; width: 100%; height: 48px;
+            transform-origin: bottom; transform: rotateX(90deg); }
+  .wall-b { top: 100%; left: 0; width: 100%; height: 48px;
+            transform-origin: top; transform: rotateX(-90deg); }
+  .wall-l { right: 100%; top: 0; width: 48px; height: 100%;
+            transform-origin: right; transform: rotateY(-90deg); }
+  .wall-r { left: 100%; top: 0; width: 48px; height: 100%;
+            transform-origin: left; transform: rotateY(90deg); }
+
+  .sticker.white  .wall { background: linear-gradient(180deg, #c9d1d9, #9aa4af); }
+  .sticker.yellow .wall { background: linear-gradient(180deg, #d8ab1a, #a87e00); }
+  .sticker.red    .wall { background: linear-gradient(180deg, #d42a52, #8f0a38); }
+  .sticker.orange .wall { background: linear-gradient(180deg, #e8861f, #b35a00); }
+  .sticker.blue   .wall { background: linear-gradient(180deg, #2f7fe0, #083f96); }
+  .sticker.green  .wall { background: linear-gradient(180deg, #2fbe66, #0a7a38); }
+
+  .white  { background: linear-gradient(145deg, #ffffff, #cfd6df); }
+  .yellow { background: linear-gradient(145deg, #ffd93b, #e0a800); }
+  .red    { background: linear-gradient(145deg, #ff4d4f, #c01048); }
+  .orange { background: linear-gradient(145deg, #ff9f43, #e06b00); }
+  .blue   { background: linear-gradient(145deg, #4da3ff, #0b57c2); }
+  .green  { background: linear-gradient(145deg, #4ce07f, #0f9d4a); }
+
+  .front  { transform: translateZ(150px); }
+  .back   { transform: rotateY(180deg) translateZ(150px); }
+  .right  { transform: rotateY(90deg)  translateZ(150px); }
+  .left   { transform: rotateY(-90deg) translateZ(150px); }
+  .top    { transform: rotateX(90deg)  translateZ(150px); }
+  .bottom { transform: rotateX(-90deg) translateZ(150px); }
+
+  /* Bodenschatten, atmet mit dem Schweben */
+  .shadow {
+    position: absolute;
+    bottom: -170px;
+    left: 50%;
+    width: 280px;
+    height: 46px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55) 0%, transparent 70%);
+    filter: blur(6px);
+    animation: shadowPulse 6s ease-in-out infinite;
+  }
+
+  @keyframes shadowPulse {
+    0%, 100% { transform: translateX(-50%) scale(1.05); opacity: 0.9; }
+    50%      { transform: translateX(-50%) scale(0.8);  opacity: 0.55; }
+  }
+
+  .title {
+    position: fixed;
+    bottom: 34px;
+    width: 100%;
+    text-align: center;
+    color: #8b93b0;
+    letter-spacing: 6px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+  <div class="scene">
+    <div class="float">
+      <div class="cube" id="cube">
+        <div class="face front" data-face="front">
+          <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
+          <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
+          <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
+        </div>
+        <div class="face back" data-face="back">
+          <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
+          <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
+          <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
+        </div>
+        <div class="face right" data-face="right">
+          <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
+          <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
+          <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
+        </div>
+        <div class="face left" data-face="left">
+          <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
+          <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
+          <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
+        </div>
+        <div class="face top" data-face="top">
+          <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
+          <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
+          <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
+        </div>
+        <div class="face bottom" data-face="bottom">
+          <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
+          <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
+          <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
+        </div>
+      </div>
+    </div>
+    <div class="shadow"></div>
+  </div>
+
+  <div class="title">Cubic &middot; Floating</div>
+
+<script>
+  const cube = document.getElementById('cube');
+  const faces = Array.from(document.querySelectorAll('.face'));
+
+  /* Seitenwaende unter jedem Sticker erzeugen (Schubladen-Box) */
+  document.querySelectorAll('.sticker').forEach(sticker => {
+    ['wall-t', 'wall-b', 'wall-l', 'wall-r'].forEach(cls => {
+      const wall = document.createElement('div');
+      wall.className = 'wall ' + cls;
+      sticker.appendChild(wall);
+    });
+  });
+
+  /* Normalen der Seitenflaechen im Wuerfelraum (CSS: +y zeigt nach unten) */
+  const normals = {
+    front:  [0, 0, 1],
+    back:   [0, 0, -1],
+    right:  [1, 0, 0],
+    left:   [-1, 0, 0],
+    top:    [0, -1, 0],
+    bottom: [0, 1, 0]
+  };
+
+  /* Liest die aktuelle Drehmatrix des Würfels und liefert die Flächen,
+     die gerade zum Betrachter zeigen */
+  function visibleFaces() {
+    const t = getComputedStyle(cube).transform;
+    if (!t || t === 'none') return faces;
+
+    let e;
+    const m3d = t.match(/matrix3d\(([^)]+)\)/);
+    if (m3d) {
+      e = m3d[1].split(',').map(parseFloat);
+    } else {
+      const m2 = t.match(/matrix\(([^)]+)\)/);
+      if (!m2) return faces;
+      const a = m2[1].split(',').map(parseFloat);
+      e = [a[0], a[1], 0, 0, a[2], a[3], 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    }
+
+    return faces.filter(face => {
+      const n = normals[face.dataset.face];
+      const z = e[2] * n[0] + e[6] * n[1] + e[10] * n[2];
+      return z > 0.3;
+    });
+  }
+
+  /* Genau eine Schublade auf einer sichtbaren Fläche, Sticker wechselnd verteilt */
+  function openDrawer() {
+    const visible = visibleFaces();
+    const pool = visible.length ? visible : faces;
+    const face = pool[Math.floor(Math.random() * pool.length)];
+    const stickers = face.querySelectorAll('.sticker');
+    const sticker = stickers[Math.floor(Math.random() * stickers.length)];
+
+    sticker.classList.add('out');
+    setTimeout(() => sticker.classList.remove('out'), 1700);
+
+    setTimeout(openDrawer, 4000 + Math.random() * 3500);
+  }
+
+  setTimeout(openDrawer, 1800);
+</script>
+
+</body>
+</html>
