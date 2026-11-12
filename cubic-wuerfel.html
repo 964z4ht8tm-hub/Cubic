@@ -70,7 +70,17 @@
     box-shadow:
       inset 0 2px 6px rgba(255, 255, 255, 0.35),
       inset 0 -3px 8px rgba(0, 0, 0, 0.35);
-    animation: sticker-out 25s ease-in-out infinite;
+    transition:
+      transform 0.9s cubic-bezier(0.45, 0, 0.25, 1),
+      box-shadow 0.9s ease;
+  }
+
+  .sticker.out {
+    transform: translateZ(48px);
+    box-shadow:
+      inset 0 2px 6px rgba(255, 255, 255, 0.35),
+      inset 0 -3px 8px rgba(0, 0, 0, 0.35),
+      0 0 22px rgba(120, 170, 255, 0.45);
   }
 
   .white  { background: linear-gradient(145deg, #ffffff, #cfd6df); }
@@ -86,82 +96,6 @@
   .left   { transform: rotateY(-90deg) translateZ(150px); }
   .top    { transform: rotateX(90deg)  translateZ(150px); }
   .bottom { transform: rotateX(-90deg) translateZ(150px); }
-
-  /* Schubladen: ein zufällig wirkender Sticker gleitet heraus und zurück.
-     Alle 54 Sticker teilen sich eine Keyframe-Definition, erhalten aber
-     eigene Zykluslängen und Phasenverschiebungen - dadurch öffnen sich
-     unterschiedliche Sticker zu unregelmäßigen Zeitpunkten. */
-
-  @keyframes sticker-out {
-    0%, 42%    { transform: translateZ(0);
-                 box-shadow:
-                   inset 0 2px 6px rgba(255, 255, 255, 0.35),
-                   inset 0 -3px 8px rgba(0, 0, 0, 0.35); }
-    46%, 54%   { transform: translateZ(48px);
-                 box-shadow:
-                   inset 0 2px 6px rgba(255, 255, 255, 0.35),
-                   inset 0 -3px 8px rgba(0, 0, 0, 0.35),
-                   0 0 22px rgba(120, 170, 255, 0.45); }
-    58%, 100%  { transform: translateZ(0);
-                 box-shadow:
-                   inset 0 2px 6px rgba(255, 255, 255, 0.35),
-                   inset 0 -3px 8px rgba(0, 0, 0, 0.35); }
-  }
-
-  .front .sticker:nth-child(1) { animation-duration: 25s; animation-delay: -15s; }
-  .front .sticker:nth-child(2) { animation-duration: 32s; animation-delay: -28s; }
-  .front .sticker:nth-child(3) { animation-duration: 39s; animation-delay: -41s; }
-  .front .sticker:nth-child(4) { animation-duration: 21s; animation-delay: -13s; }
-  .front .sticker:nth-child(5) { animation-duration: 28s; animation-delay: -26s; }
-  .front .sticker:nth-child(6) { animation-duration: 35s; animation-delay: -39s; }
-  .front .sticker:nth-child(7) { animation-duration: 42s; animation-delay: -11s; }
-  .front .sticker:nth-child(8) { animation-duration: 24s; animation-delay: -24s; }
-  .front .sticker:nth-child(9) { animation-duration: 31s; animation-delay: -37s; }
-  .back .sticker:nth-child(1) { animation-duration: 38s; animation-delay: -9s; }
-  .back .sticker:nth-child(2) { animation-duration: 20s; animation-delay: -22s; }
-  .back .sticker:nth-child(3) { animation-duration: 27s; animation-delay: -35s; }
-  .back .sticker:nth-child(4) { animation-duration: 34s; animation-delay: -7s; }
-  .back .sticker:nth-child(5) { animation-duration: 41s; animation-delay: -20s; }
-  .back .sticker:nth-child(6) { animation-duration: 23s; animation-delay: -33s; }
-  .back .sticker:nth-child(7) { animation-duration: 30s; animation-delay: -5s; }
-  .back .sticker:nth-child(8) { animation-duration: 37s; animation-delay: -18s; }
-  .back .sticker:nth-child(9) { animation-duration: 19s; animation-delay: -31s; }
-  .right .sticker:nth-child(1) { animation-duration: 26s; animation-delay: -3s; }
-  .right .sticker:nth-child(2) { animation-duration: 33s; animation-delay: -16s; }
-  .right .sticker:nth-child(3) { animation-duration: 40s; animation-delay: -29s; }
-  .right .sticker:nth-child(4) { animation-duration: 22s; animation-delay: -42s; }
-  .right .sticker:nth-child(5) { animation-duration: 29s; animation-delay: -14s; }
-  .right .sticker:nth-child(6) { animation-duration: 36s; animation-delay: -27s; }
-  .right .sticker:nth-child(7) { animation-duration: 18s; animation-delay: -40s; }
-  .right .sticker:nth-child(8) { animation-duration: 25s; animation-delay: -12s; }
-  .right .sticker:nth-child(9) { animation-duration: 32s; animation-delay: -25s; }
-  .left .sticker:nth-child(1) { animation-duration: 39s; animation-delay: -38s; }
-  .left .sticker:nth-child(2) { animation-duration: 21s; animation-delay: -10s; }
-  .left .sticker:nth-child(3) { animation-duration: 28s; animation-delay: -23s; }
-  .left .sticker:nth-child(4) { animation-duration: 35s; animation-delay: -36s; }
-  .left .sticker:nth-child(5) { animation-duration: 42s; animation-delay: -8s; }
-  .left .sticker:nth-child(6) { animation-duration: 24s; animation-delay: -21s; }
-  .left .sticker:nth-child(7) { animation-duration: 31s; animation-delay: -34s; }
-  .left .sticker:nth-child(8) { animation-duration: 38s; animation-delay: -6s; }
-  .left .sticker:nth-child(9) { animation-duration: 20s; animation-delay: -19s; }
-  .top .sticker:nth-child(1) { animation-duration: 27s; animation-delay: -32s; }
-  .top .sticker:nth-child(2) { animation-duration: 34s; animation-delay: -4s; }
-  .top .sticker:nth-child(3) { animation-duration: 41s; animation-delay: -17s; }
-  .top .sticker:nth-child(4) { animation-duration: 23s; animation-delay: -30s; }
-  .top .sticker:nth-child(5) { animation-duration: 30s; animation-delay: -2s; }
-  .top .sticker:nth-child(6) { animation-duration: 37s; animation-delay: -15s; }
-  .top .sticker:nth-child(7) { animation-duration: 19s; animation-delay: -28s; }
-  .top .sticker:nth-child(8) { animation-duration: 26s; animation-delay: -41s; }
-  .top .sticker:nth-child(9) { animation-duration: 33s; animation-delay: -13s; }
-  .bottom .sticker:nth-child(1) { animation-duration: 40s; animation-delay: -26s; }
-  .bottom .sticker:nth-child(2) { animation-duration: 22s; animation-delay: -39s; }
-  .bottom .sticker:nth-child(3) { animation-duration: 29s; animation-delay: -11s; }
-  .bottom .sticker:nth-child(4) { animation-duration: 36s; animation-delay: -24s; }
-  .bottom .sticker:nth-child(5) { animation-duration: 18s; animation-delay: -37s; }
-  .bottom .sticker:nth-child(6) { animation-duration: 25s; animation-delay: -9s; }
-  .bottom .sticker:nth-child(7) { animation-duration: 32s; animation-delay: -22s; }
-  .bottom .sticker:nth-child(8) { animation-duration: 39s; animation-delay: -35s; }
-  .bottom .sticker:nth-child(9) { animation-duration: 21s; animation-delay: -7s; }
 
   /* Bodenschatten, atmet mit dem Schweben */
   .shadow {
@@ -197,33 +131,33 @@
 
   <div class="scene">
     <div class="float">
-      <div class="cube">
-        <div class="face front">
+      <div class="cube" id="cube">
+        <div class="face front" data-face="front">
           <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
           <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
           <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
         </div>
-        <div class="face back">
+        <div class="face back" data-face="back">
           <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
           <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
           <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
         </div>
-        <div class="face right">
+        <div class="face right" data-face="right">
           <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
           <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
           <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
         </div>
-        <div class="face left">
+        <div class="face left" data-face="left">
           <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
           <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
           <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
         </div>
-        <div class="face top">
+        <div class="face top" data-face="top">
           <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
           <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
           <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
         </div>
-        <div class="face bottom">
+        <div class="face bottom" data-face="bottom">
           <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
           <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
           <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
@@ -234,6 +168,61 @@
   </div>
 
   <div class="title">Cubic &middot; Floating</div>
+
+<script>
+  const cube = document.getElementById('cube');
+  const faces = Array.from(document.querySelectorAll('.face'));
+
+  /* Normalen der Seitenflaechen im Wuerfelraum (CSS: +y zeigt nach unten) */
+  const normals = {
+    front:  [0, 0, 1],
+    back:   [0, 0, -1],
+    right:  [1, 0, 0],
+    left:   [-1, 0, 0],
+    top:    [0, -1, 0],
+    bottom: [0, 1, 0]
+  };
+
+  /* Liest die aktuelle Drehmatrix des Würfels und liefert die Flächen,
+     die gerade zum Betrachter zeigen */
+  function visibleFaces() {
+    const t = getComputedStyle(cube).transform;
+    if (!t || t === 'none') return faces;
+
+    let e;
+    const m3d = t.match(/matrix3d\(([^)]+)\)/);
+    if (m3d) {
+      e = m3d[1].split(',').map(parseFloat);
+    } else {
+      const m2 = t.match(/matrix\(([^)]+)\)/);
+      if (!m2) return faces;
+      const a = m2[1].split(',').map(parseFloat);
+      e = [a[0], a[1], 0, 0, a[2], a[3], 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    }
+
+    return faces.filter(face => {
+      const n = normals[face.dataset.face];
+      const z = e[2] * n[0] + e[6] * n[1] + e[10] * n[2];
+      return z > 0.3;
+    });
+  }
+
+  /* Genau eine Schublade auf einer sichtbaren Fläche, Sticker wechselnd verteilt */
+  function openDrawer() {
+    const visible = visibleFaces();
+    const pool = visible.length ? visible : faces;
+    const face = pool[Math.floor(Math.random() * pool.length)];
+    const stickers = face.querySelectorAll('.sticker');
+    const sticker = stickers[Math.floor(Math.random() * stickers.length)];
+
+    sticker.classList.add('out');
+    setTimeout(() => sticker.classList.remove('out'), 1700);
+
+    setTimeout(openDrawer, 4000 + Math.random() * 3500);
+  }
+
+  setTimeout(openDrawer, 1800);
+</script>
 
 </body>
 </html>
