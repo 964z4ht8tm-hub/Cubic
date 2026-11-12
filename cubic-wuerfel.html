@@ -60,14 +60,17 @@
     padding: 12px;
     background: #0a0a0a;
     border-radius: 14px;
+    transform-style: preserve-3d;
     backface-visibility: hidden;
   }
 
   .sticker {
     border-radius: 12px;
+    transform: translateZ(0);
     box-shadow:
       inset 0 2px 6px rgba(255, 255, 255, 0.35),
       inset 0 -3px 8px rgba(0, 0, 0, 0.35);
+    animation: sticker-out 25s ease-in-out infinite;
   }
 
   .white  { background: linear-gradient(145deg, #ffffff, #cfd6df); }
@@ -77,99 +80,81 @@
   .blue   { background: linear-gradient(145deg, #4da3ff, #0b57c2); }
   .green  { background: linear-gradient(145deg, #4ce07f, #0f9d4a); }
 
-  /* Schubladen: jede Fläche gleitet zu einem eigenen Zeitpunkt heraus.
-     Unterschiedliche Zykluslängen verschieben die Phasen gegeneinander,
-     sodass die Oeffnungen unregelmäßig wirken. */
+  /* Schubladen: ein zufällig wirkender Sticker gleitet heraus und zurück.
+     Alle 54 Sticker teilen sich eine Keyframe-Definition, erhalten aber
+     eigene Zykluslängen und Phasenverschiebungen - dadurch öffnen sich
+     unterschiedliche Sticker zu unregelmäßigen Zeitpunkten. */
 
-  .front {
-    transform: translateZ(150px);
-    animation: drawer-front 26s ease-in-out -3s infinite;
+  @keyframes sticker-out {
+    0%, 42%    { transform: translateZ(0);
+                 box-shadow:
+                   inset 0 2px 6px rgba(255, 255, 255, 0.35),
+                   inset 0 -3px 8px rgba(0, 0, 0, 0.35); }
+    46%, 54%   { transform: translateZ(48px);
+                 box-shadow:
+                   inset 0 2px 6px rgba(255, 255, 255, 0.35),
+                   inset 0 -3px 8px rgba(0, 0, 0, 0.35),
+                   0 0 22px rgba(120, 170, 255, 0.45); }
+    58%, 100%  { transform: translateZ(0);
+                 box-shadow:
+                   inset 0 2px 6px rgba(255, 255, 255, 0.35),
+                   inset 0 -3px 8px rgba(0, 0, 0, 0.35); }
   }
 
-  @keyframes drawer-front {
-    0%, 44%  { transform: translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-    48%, 54% { transform: translateZ(198px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9),
-                           0 0 26px rgba(120, 170, 255, 0.3); }
-    58%, 100% { transform: translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-  }
-
-  .back {
-    transform: rotateY(180deg) translateZ(150px);
-    animation: drawer-back 31s ease-in-out -11s infinite;
-  }
-
-  @keyframes drawer-back {
-    0%, 44%  { transform: rotateY(180deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-    48%, 54% { transform: rotateY(180deg) translateZ(198px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9),
-                           0 0 26px rgba(120, 170, 255, 0.3); }
-    58%, 100% { transform: rotateY(180deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-  }
-
-  .right {
-    transform: rotateY(90deg) translateZ(150px);
-    animation: drawer-right 24s ease-in-out -7s infinite;
-  }
-
-  @keyframes drawer-right {
-    0%, 44%  { transform: rotateY(90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-    48%, 54% { transform: rotateY(90deg) translateZ(198px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9),
-                           0 0 26px rgba(120, 170, 255, 0.3); }
-    58%, 100% { transform: rotateY(90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-  }
-
-  .left {
-    transform: rotateY(-90deg) translateZ(150px);
-    animation: drawer-left 34s ease-in-out -19s infinite;
-  }
-
-  @keyframes drawer-left {
-    0%, 44%  { transform: rotateY(-90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-    48%, 54% { transform: rotateY(-90deg) translateZ(198px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9),
-                           0 0 26px rgba(120, 170, 255, 0.3); }
-    58%, 100% { transform: rotateY(-90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-  }
-
-  .top {
-    transform: rotateX(90deg) translateZ(150px);
-    animation: drawer-top 28s ease-in-out -15s infinite;
-  }
-
-  @keyframes drawer-top {
-    0%, 44%  { transform: rotateX(90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-    48%, 54% { transform: rotateX(90deg) translateZ(198px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9),
-                           0 0 26px rgba(120, 170, 255, 0.3); }
-    58%, 100% { transform: rotateX(90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-  }
-
-  .bottom {
-    transform: rotateX(-90deg) translateZ(150px);
-    animation: drawer-bottom 37s ease-in-out -5s infinite;
-  }
-
-  @keyframes drawer-bottom {
-    0%, 44%  { transform: rotateX(-90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-    48%, 54% { transform: rotateX(-90deg) translateZ(198px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9),
-                           0 0 26px rgba(120, 170, 255, 0.3); }
-    58%, 100% { transform: rotateX(-90deg) translateZ(150px);
-               box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9); }
-  }
+  .front .sticker:nth-child(1) { animation-duration: 25s; animation-delay: -15s; }
+  .front .sticker:nth-child(2) { animation-duration: 32s; animation-delay: -28s; }
+  .front .sticker:nth-child(3) { animation-duration: 39s; animation-delay: -41s; }
+  .front .sticker:nth-child(4) { animation-duration: 21s; animation-delay: -13s; }
+  .front .sticker:nth-child(5) { animation-duration: 28s; animation-delay: -26s; }
+  .front .sticker:nth-child(6) { animation-duration: 35s; animation-delay: -39s; }
+  .front .sticker:nth-child(7) { animation-duration: 42s; animation-delay: -11s; }
+  .front .sticker:nth-child(8) { animation-duration: 24s; animation-delay: -24s; }
+  .front .sticker:nth-child(9) { animation-duration: 31s; animation-delay: -37s; }
+  .back .sticker:nth-child(1) { animation-duration: 38s; animation-delay: -9s; }
+  .back .sticker:nth-child(2) { animation-duration: 20s; animation-delay: -22s; }
+  .back .sticker:nth-child(3) { animation-duration: 27s; animation-delay: -35s; }
+  .back .sticker:nth-child(4) { animation-duration: 34s; animation-delay: -7s; }
+  .back .sticker:nth-child(5) { animation-duration: 41s; animation-delay: -20s; }
+  .back .sticker:nth-child(6) { animation-duration: 23s; animation-delay: -33s; }
+  .back .sticker:nth-child(7) { animation-duration: 30s; animation-delay: -5s; }
+  .back .sticker:nth-child(8) { animation-duration: 37s; animation-delay: -18s; }
+  .back .sticker:nth-child(9) { animation-duration: 19s; animation-delay: -31s; }
+  .right .sticker:nth-child(1) { animation-duration: 26s; animation-delay: -3s; }
+  .right .sticker:nth-child(2) { animation-duration: 33s; animation-delay: -16s; }
+  .right .sticker:nth-child(3) { animation-duration: 40s; animation-delay: -29s; }
+  .right .sticker:nth-child(4) { animation-duration: 22s; animation-delay: -42s; }
+  .right .sticker:nth-child(5) { animation-duration: 29s; animation-delay: -14s; }
+  .right .sticker:nth-child(6) { animation-duration: 36s; animation-delay: -27s; }
+  .right .sticker:nth-child(7) { animation-duration: 18s; animation-delay: -40s; }
+  .right .sticker:nth-child(8) { animation-duration: 25s; animation-delay: -12s; }
+  .right .sticker:nth-child(9) { animation-duration: 32s; animation-delay: -25s; }
+  .left .sticker:nth-child(1) { animation-duration: 39s; animation-delay: -38s; }
+  .left .sticker:nth-child(2) { animation-duration: 21s; animation-delay: -10s; }
+  .left .sticker:nth-child(3) { animation-duration: 28s; animation-delay: -23s; }
+  .left .sticker:nth-child(4) { animation-duration: 35s; animation-delay: -36s; }
+  .left .sticker:nth-child(5) { animation-duration: 42s; animation-delay: -8s; }
+  .left .sticker:nth-child(6) { animation-duration: 24s; animation-delay: -21s; }
+  .left .sticker:nth-child(7) { animation-duration: 31s; animation-delay: -34s; }
+  .left .sticker:nth-child(8) { animation-duration: 38s; animation-delay: -6s; }
+  .left .sticker:nth-child(9) { animation-duration: 20s; animation-delay: -19s; }
+  .top .sticker:nth-child(1) { animation-duration: 27s; animation-delay: -32s; }
+  .top .sticker:nth-child(2) { animation-duration: 34s; animation-delay: -4s; }
+  .top .sticker:nth-child(3) { animation-duration: 41s; animation-delay: -17s; }
+  .top .sticker:nth-child(4) { animation-duration: 23s; animation-delay: -30s; }
+  .top .sticker:nth-child(5) { animation-duration: 30s; animation-delay: -2s; }
+  .top .sticker:nth-child(6) { animation-duration: 37s; animation-delay: -15s; }
+  .top .sticker:nth-child(7) { animation-duration: 19s; animation-delay: -28s; }
+  .top .sticker:nth-child(8) { animation-duration: 26s; animation-delay: -41s; }
+  .top .sticker:nth-child(9) { animation-duration: 33s; animation-delay: -13s; }
+  .bottom .sticker:nth-child(1) { animation-duration: 40s; animation-delay: -26s; }
+  .bottom .sticker:nth-child(2) { animation-duration: 22s; animation-delay: -39s; }
+  .bottom .sticker:nth-child(3) { animation-duration: 29s; animation-delay: -11s; }
+  .bottom .sticker:nth-child(4) { animation-duration: 36s; animation-delay: -24s; }
+  .bottom .sticker:nth-child(5) { animation-duration: 18s; animation-delay: -37s; }
+  .bottom .sticker:nth-child(6) { animation-duration: 25s; animation-delay: -9s; }
+  .bottom .sticker:nth-child(7) { animation-duration: 32s; animation-delay: -22s; }
+  .bottom .sticker:nth-child(8) { animation-duration: 39s; animation-delay: -35s; }
+  .bottom .sticker:nth-child(9) { animation-duration: 21s; animation-delay: -7s; }
 
   /* Bodenschatten, atmet mit dem Schweben */
   .shadow {
