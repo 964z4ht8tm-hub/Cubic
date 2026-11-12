@@ -41,13 +41,8 @@
     width: 300px;
     height: 300px;
     transform-style: preserve-3d;
-    transform: rotateX(-22deg) rotateY(0deg);
-    animation: spin 26s linear infinite;
-  }
-
-  @keyframes spin {
-    from { transform: rotateX(-22deg) rotateY(0deg); }
-    to   { transform: rotateX(-22deg) rotateY(360deg); }
+    transform: rotateX(-22deg) rotateY(0deg) rotateZ(0deg);
+    will-change: transform;
   }
 
   .face {
@@ -60,6 +55,14 @@
     background: #0a0a0a;
     border-radius: 14px;
     box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9);
+    transition: transform 1.1s cubic-bezier(0.45, 0, 0.25, 1);
+    will-change: transform;
+  }
+
+  .face.open {
+    box-shadow:
+      inset 0 0 30px rgba(0, 0, 0, 0.9),
+      0 0 26px rgba(120, 170, 255, 0.28);
   }
 
   .sticker {
@@ -117,33 +120,33 @@
 
   <div class="scene">
     <div class="float">
-      <div class="cube">
-        <div class="face front">
+      <div class="cube" id="cube">
+        <div class="face front" data-face="front">
           <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
           <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
           <div class="sticker white"></div><div class="sticker white"></div><div class="sticker white"></div>
         </div>
-        <div class="face back">
+        <div class="face back" data-face="back">
           <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
           <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
           <div class="sticker yellow"></div><div class="sticker yellow"></div><div class="sticker yellow"></div>
         </div>
-        <div class="face right">
+        <div class="face right" data-face="right">
           <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
           <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
           <div class="sticker red"></div><div class="sticker red"></div><div class="sticker red"></div>
         </div>
-        <div class="face left">
+        <div class="face left" data-face="left">
           <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
           <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
           <div class="sticker orange"></div><div class="sticker orange"></div><div class="sticker orange"></div>
         </div>
-        <div class="face top">
+        <div class="face top" data-face="top">
           <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
           <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
           <div class="sticker blue"></div><div class="sticker blue"></div><div class="sticker blue"></div>
         </div>
-        <div class="face bottom">
+        <div class="face bottom" data-face="bottom">
           <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
           <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
           <div class="sticker green"></div><div class="sticker green"></div><div class="sticker green"></div>
@@ -154,6 +157,55 @@
   </div>
 
   <div class="title">Cubic &middot; Floating</div>
+
+<script>
+  const cube = document.getElementById('cube');
+
+  /* Tumble-Rotation um alle drei Achsen */
+  let rx = -22, ry = 0, rz = 0;
+  const speedX = 0.08, speedY = 0.18, speedZ = 0.05;
+
+  (function tumble() {
+    rx += speedX;
+    ry += speedY;
+    rz += speedZ;
+    cube.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+    requestAnimationFrame(tumble);
+  })();
+
+  /* Zufälliges Oeffnen einer Fläche wie eine Schublade */
+  const baseTransforms = {
+    front:  'translateZ(150px)',
+    back:   'rotateY(180deg) translateZ(150px)',
+    right:  'rotateY(90deg)  translateZ(150px)',
+    left:   'rotateY(-90deg) translateZ(150px)',
+    top:    'rotateX(90deg)  translateZ(150px)',
+    bottom: 'rotateX(-90deg) translateZ(150px)'
+  };
+  const DRAWER_OUT = 45;
+  const faces = Array.from(document.querySelectorAll('.face'));
+
+  function openRandomDrawer() {
+    const face = faces[Math.floor(Math.random() * faces.length)];
+    const name = face.dataset.face;
+    const out = baseTransforms[name].replace(
+      /translateZ\((\d+)px\)/,
+      (_, z) => `translateZ(${Number(z) + DRAWER_OUT}px)`
+    );
+
+    face.style.transform = out;
+    face.classList.add('open');
+
+    setTimeout(() => {
+      face.style.transform = baseTransforms[name];
+      face.classList.remove('open');
+    }, 1600);
+
+    setTimeout(openRandomDrawer, 4000 + Math.random() * 5000);
+  }
+
+  setTimeout(openRandomDrawer, 2500);
+</script>
 
 </body>
 </html>
