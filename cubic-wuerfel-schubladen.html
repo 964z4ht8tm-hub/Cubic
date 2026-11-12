@@ -39,6 +39,7 @@
 
   /* Taumelnde Drehung um alle drei Achsen (X: 1, Y: 2, Z: 1 Umdrehung pro Zyklus) */
   .cube {
+    --drawer: 64px;
     position: relative;
     width: 300px;
     height: 300px;
@@ -53,11 +54,11 @@
 
   .face {
     position: absolute;
-    inset: 0;
+    inset: 3px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    padding: 12px;
+    gap: 3px;
+    padding: 6px;
     background: #0a0a0a;
     border-radius: 14px;
     transform-style: preserve-3d;
@@ -67,7 +68,6 @@
   .sticker {
     position: relative;
     border-radius: 12px;
-    transform: translateZ(0);
     transform-style: preserve-3d;
     box-shadow:
       inset 0 2px 6px rgba(255, 255, 255, 0.35),
@@ -78,7 +78,7 @@
   }
 
   .sticker.out {
-    transform: translateZ(48px);
+    transform: translateZ(var(--drawer));
     box-shadow:
       inset 0 2px 6px rgba(255, 255, 255, 0.35),
       inset 0 -3px 8px rgba(0, 0, 0, 0.35),
@@ -91,13 +91,13 @@
     backface-visibility: hidden;
   }
 
-  .wall-t { bottom: 100%; left: 0; width: 100%; height: 48px;
+  .wall-t { bottom: 100%; left: 0; width: 100%; height: var(--drawer);
             transform-origin: bottom; transform: rotateX(90deg); }
-  .wall-b { top: 100%; left: 0; width: 100%; height: 48px;
+  .wall-b { top: 100%; left: 0; width: 100%; height: var(--drawer);
             transform-origin: top; transform: rotateX(-90deg); }
-  .wall-l { right: 100%; top: 0; width: 48px; height: 100%;
+  .wall-l { right: 100%; top: 0; width: var(--drawer); height: 100%;
             transform-origin: right; transform: rotateY(-90deg); }
-  .wall-r { left: 100%; top: 0; width: 48px; height: 100%;
+  .wall-r { left: 100%; top: 0; width: var(--drawer); height: 100%;
             transform-origin: left; transform: rotateY(90deg); }
 
   .sticker.white  .wall { background: linear-gradient(180deg, #c9d1d9, #9aa4af); }
@@ -197,14 +197,18 @@
   const cube = document.getElementById('cube');
   const faces = Array.from(document.querySelectorAll('.face'));
 
-  /* Seitenwaende unter jedem Sticker erzeugen (Schubladen-Box) */
-  document.querySelectorAll('.sticker').forEach(sticker => {
+  /* Seitenwaende entstehen nur waehrend des Oeffnens */
+  function addWalls(sticker) {
     ['wall-t', 'wall-b', 'wall-l', 'wall-r'].forEach(cls => {
       const wall = document.createElement('div');
       wall.className = 'wall ' + cls;
       sticker.appendChild(wall);
     });
-  });
+  }
+
+  function removeWalls(sticker) {
+    sticker.querySelectorAll('.wall').forEach(wall => wall.remove());
+  }
 
   /* Normalen der Seitenflaechen im Wuerfelraum (CSS: +y zeigt nach unten) */
   const normals = {
@@ -249,7 +253,11 @@
     const sticker = stickers[Math.floor(Math.random() * stickers.length)];
 
     sticker.classList.add('out');
-    setTimeout(() => sticker.classList.remove('out'), 1700);
+    addWalls(sticker);
+    setTimeout(() => {
+      sticker.classList.remove('out');
+      setTimeout(() => removeWalls(sticker), 1000);
+    }, 1700);
 
     setTimeout(openDrawer, 4000 + Math.random() * 3500);
   }
